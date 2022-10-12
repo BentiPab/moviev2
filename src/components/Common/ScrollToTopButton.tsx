@@ -17,6 +17,10 @@ const StyledButton = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  &:hover {
+    background-color: #1565c0;
+  }
 `;
 
 type Props = {

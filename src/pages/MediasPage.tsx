@@ -2,14 +2,17 @@ import InfiniteScroller from "components/Common/InfiniteScroller";
 import { useLazyGetMediaListsQuery } from "features/apiCalls/movieEndpoints";
 import useCommonParams from "hooks/useCommonParams";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import LoadingPage from "./LoadingPage";
 import { useParams } from "react-router-dom";
-import { selectIsMobile } from "./../features/ui/selectors";
 import Poster from "components/Poster/Poster";
 import { BaseData, MediaListsRoutes } from "model/models";
+import useScrollToTop from "hooks/useScrollToTop";
+import ScrollToTopButton from "components/Common/ScrollToTopButton";
+
+const ID = 'medias-page'
 
 const MediasPage = () => {
+    const showScrollToTopButton = useScrollToTop(ID);
     const { type = "", list = "" } = useParams<{
         type: string;
         list: MediaListsRoutes;
@@ -23,7 +26,6 @@ const MediasPage = () => {
     ] = useLazyGetMediaListsQuery();
     const params = useCommonParams();
     const [media, setMedia] = useState<BaseData[]>([]);
-    const isMobile = useSelector(selectIsMobile);
     const [isLastPage, setIsLastPage] = useState(false);
 
     const getMedia = async () => {
@@ -54,20 +56,19 @@ const MediasPage = () => {
         getMedia();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [list, type]);
-
+    console.log('showButon', showScrollToTopButton)
     return (
         <>
             {!media || isLoading ? (
                 <LoadingPage />
             ) : (
                 <InfiniteScroller
-                    direction="row"
-                    flex={isMobile}
                     isFetching={isFetching}
-                    mainContent
+                    $maincontent
                     handleScroll={() => !isLastPage && getMedia()}
                     mediaPage
                     scrollToTop={list !== lastList}
+                    id={ID}
                 >
                     {media.map((posterData) => (
                         <Poster
@@ -80,6 +81,7 @@ const MediasPage = () => {
                     ))}
                 </InfiniteScroller>
             )}
+            {showScrollToTopButton && <ScrollToTopButton id={ID} />}
         </>
     );
 };

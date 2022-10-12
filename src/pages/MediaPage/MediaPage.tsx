@@ -9,16 +9,14 @@ import LoadingPage from "../LoadingPage";
 import { getYear } from "utils/media";
 import MediaPageTabs from "./MediaPageTabs";
 import theme from "styleguide/theme";
+import ScrollToTopButton from "components/Common/ScrollToTopButton";
+import useScrollToTop from "./../../hooks/useScrollToTop";
 
 const MediaPageContainer = styled.div`
   display: flex;
   flex-flow: column nowrap;
   grid-area: main-content;
   padding: 1rem;
-  max-width: 100%;
-  width: 100%;
-  max-height: 100%;
-  overflow: scroll;
 
   ${theme.breakpoints.up("md")} {
     overflow: auto;
@@ -53,12 +51,15 @@ const PosterContainer = styled.div`
   max-height: 100%;
 `;
 
+const ID = "media-page";
+
 const MediaPage = () => {
   const { id: mediaId = "", type = "" } = useParams<{
     type: string;
     id: string;
   }>();
   const { data: media } = useGetMediaDetailsQuery({ type, mediaId });
+  const showScrollToTop = useScrollToTop(ID);
 
   if (!media) {
     return <LoadingPage />;
@@ -67,7 +68,7 @@ const MediaPage = () => {
   const year = getYear(media.release_date);
 
   return (
-    <MediaPageContainer>
+    <MediaPageContainer id={ID}>
       <PosterContainer>
         <Poster posterData={media} original />
       </PosterContainer>
@@ -93,6 +94,7 @@ const MediaPage = () => {
           overview={media.overview}
         />
       </MediaInfoContainer>
+      {showScrollToTop && <ScrollToTopButton id={ID} />}
     </MediaPageContainer>
   );
 };

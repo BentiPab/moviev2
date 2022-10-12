@@ -5,9 +5,10 @@ import { NavLinkType } from "model/models";
 import { useLocation, useNavigate } from "react-router-dom";
 import NavSubLink from "./NavSubLink";
 import { useDispatch, useSelector } from "react-redux";
-import { selectExpandedNav, selectIsMobile } from "features/ui/selectors";
+import { selectExpandedNav } from "features/ui/selectors";
 import uiActions from "features/ui/actions";
 import ListItemText from "./../Common/ListItemText";
+import useIsMobile from 'hooks/useIsMobile';
 
 type Props = {
     link: NavLinkType;
@@ -21,7 +22,7 @@ const NavExpandLink: React.FC<Props> = ({
     const active = pathname.includes(value);
     const dispatch = useDispatch();
     const isExpanded = useSelector(selectExpandedNav(label));
-    const isMobile = useSelector(selectIsMobile);
+    const isMobile = useIsMobile()
 
     const handleExpandableLink = () => {
         if (!isExpanded) {

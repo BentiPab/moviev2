@@ -6,7 +6,6 @@ const initialState: UiState = {
   expandedNav: "homepage",
   genres: [],
   showNavbar: false,
-  isMobile: false,
 };
 
 export const slice = createSlice({
@@ -21,9 +20,6 @@ export const slice = createSlice({
     },
     setShowNavbar: (state, { payload }) => {
       state.showNavbar = payload;
-    },
-    setIsMobile: (state, { payload }) => {
-      state.isMobile = payload;
     },
   },
 });

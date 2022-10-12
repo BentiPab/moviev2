@@ -2,12 +2,11 @@ import { ListItemButton } from "@mui/material";
 import authActions from "features/auth/actions";
 import dataActions from "features/data/actions";
 import { NavSubtitlesType } from "model/models";
-import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import useThunkDispatch from "./../../hooks/useThunkDispatch";
 import ListItemText from './../Common/ListItemText';
-import { selectIsMobile } from './../../features/ui/selectors';
 import uiActions from "features/ui/actions";
+import useIsMobile from "hooks/useIsMobile";
 
 type Props = {
     sublink: NavSubtitlesType;
@@ -18,7 +17,7 @@ const NavSubLink: React.FC<Props> = ({ sublink: { label, path, value } }) => {
     const navigate = useNavigate();
     const active = pathname.includes(path);
     const dispatch = useThunkDispatch();
-    const isMobile = useSelector(selectIsMobile)
+    const isMobile = useIsMobile()
     const isLogout = label === "logout";
 
     return (

@@ -10,9 +10,11 @@ type Props = {
     flex?: boolean;
     direction?: "column" | "row";
     maxPages?: number;
-    mainContent?: boolean;
+    $maincontent?: boolean;
     mediaPage?: boolean;
     scrollToTop?: boolean;
+    id?: string
+    $onecolumn?: boolean
 };
 
 const InfiniteScroller: React.FC<Props> = ({
@@ -20,10 +22,12 @@ const InfiniteScroller: React.FC<Props> = ({
     handleScroll,
     flex,
     direction,
-    mainContent,
+    $maincontent,
     isFetching,
     mediaPage,
     scrollToTop,
+    id,
+    $onecolumn
 }) => {
     const divRef = useRef<HTMLDivElement>(null);
     const dispatch = useDispatch();
@@ -55,16 +59,17 @@ const InfiniteScroller: React.FC<Props> = ({
         <>
             {flex ? (
                 <FullWidthFlex
-                    mainContent={mainContent}
+                    $maincontent={$maincontent}
                     ref={divRef}
-                    direction={direction}
-                    mediaPage={mediaPage}
+                    $direction={direction}
+                    $mediapage={mediaPage}
+                    id={id}
                 >
                     {children}
                     {isFetching && <LoadingPage expandAll />}
                 </FullWidthFlex>
             ) : (
-                <FullWidthGrid mainContent={mainContent} ref={divRef}>
+                <FullWidthGrid $maincontent={$maincontent} ref={divRef} id={id} $onecolumn={$onecolumn}>
                     {children}
                     {isFetching && <LoadingPage expandAll />}
                 </FullWidthGrid>

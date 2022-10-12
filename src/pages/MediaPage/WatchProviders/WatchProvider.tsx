@@ -13,8 +13,10 @@ const ProviderContainer = styled.div`
   flex-flow: row nowrap;
   justify-content: flex-start;
   align-items: center;
-  width: 100%;
   gap: 1rem;
+  background-color: gray;
+    padding: 0.2rem;
+    border-radius: 5rem;
 `;
 
 const ServiceChips = styled.div`

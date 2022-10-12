@@ -30,10 +30,17 @@ const PosterOverlayContainer = styled.div<{ show: boolean }>`
     cursor: pointer;
     opacity: 1;
     backdrop-filter: blur(5px);
+    
     `}
 
   h4 {
     padding: 5px;
+  }
+
+  section {
+    &:hover {
+      color: black;
+    }
   }
 `;
 
@@ -58,15 +65,18 @@ const PosterOverlay: React.FC<Props> = ({
   media,
 }) => {
   const dispatch = useDispatch();
-  const year = getYear(release_date)
-  const formattedTitle = getTitleToUrl(title)
+  const year = getYear(release_date);
+  const formattedTitle = getTitleToUrl(title);
   const handleRedirect = () => {
     dispatch(dataActions.setCurrentMedia(media));
   };
 
   return (
     <PosterOverlayContainer show={show}>
-      <Link to={`/media/${type}/${formattedTitle}/${id}`} onClick={() => handleRedirect()}>
+      <Link
+        to={`/media/${type}/${formattedTitle}/${id}`}
+        onClick={() => handleRedirect()}
+      >
         <section>
           <h4>{`${title}`}</h4>
           <h4> {`${year}`} </h4>

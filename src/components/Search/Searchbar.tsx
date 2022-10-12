@@ -4,9 +4,9 @@ import SearchInput from "./SearchInput";
 import theme from "styleguide/theme";
 import { searchSchema } from "./SearchValidation";
 import Hamburger from "components/Hamburger/Hamburger";
+import { HamburgerIcon } from './../Hamburger/Hamburger';
 
 const SearchbarContainer = styled.div`
-
   position: sticky;
   top: 0;
   grid-area: search;
@@ -16,20 +16,27 @@ const SearchbarContainer = styled.div`
   width: 100%;
   align-items: center;
   justify-content: center;
- 
- svg {
-    opacity: .5;
-    &:hover {
-        opacity: 1;
-    }
- }
 
- ${theme.breakpoints.down('md')} {
+  svg {
+    opacity: 0.5;
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  ${HamburgerIcon} {
+    display: none;
+  }
+
+  ${theme.breakpoints.down("md")} {
     min-height: 50px;
     gap: 1em;
     padding: 0 15px 0 5px;
- }
 
+    ${HamburgerIcon} {
+      display: inline-block;
+    }
+  }
 `;
 
 const Searchbar = () => {

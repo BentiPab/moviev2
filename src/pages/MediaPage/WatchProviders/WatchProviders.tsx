@@ -1,11 +1,10 @@
 import { useGetWatchProvidersQuery } from "features/apiCalls/movieEndpoints";
 import React from "react";
-import { FormattedProvider } from "../../../model/models";
 import LoadingPage from "pages/LoadingPage";
 import WatchProvider from "./WatchProvider";
 import styled from "styled-components";
 import NoResults from "components/NoResults/NoResults";
-import theme from "./../../../styleguide/theme";
+import { getRegion } from "utils/intersession";
 
 type Props = {
     mediaId: string;
@@ -14,38 +13,36 @@ type Props = {
 
 const WatchProvidersContainer = styled.div`
   display: flex;
-  flex-flow: column nowrap;
+  flex-flow: row wrap;
   grid-gap: 1rem;
-  ${theme.breakpoints.up("md")} {
-    display: grid;
-    grid-template-columns: repeat(2, 50%);
-  }
 `;
 
+const WatchProvidersTitle = styled.div`
+    flex-basis: 100%;
+    font-weight: 600;
+    justify-self: center;
+`
+
 const WatchProviders: React.FC<Props> = ({ mediaId, type }) => {
-    const { isLoading, data } = useGetWatchProvidersQuery({ type, mediaId });
+    const { isLoading, data: providers } = useGetWatchProvidersQuery({
+        type,
+        mediaId,
+    });
+
+    const { country } = getRegion();
 
     if (isLoading) {
         return <LoadingPage />;
     }
-
-    if (!data) {
-    }
-
-    const providers = data as FormattedProvider[];
-
-    return (
-        <>
-            {data ? (
-                <WatchProvidersContainer>
-                    {providers.map((provider) => (
-                        <WatchProvider provider={provider} />
-                    ))}
-                </WatchProvidersContainer>
-            ) : (
-                <NoResults resultsType="Watch Providers" />
-            )}
-        </>
+    return !!providers ? (
+        <WatchProvidersContainer>
+            <WatchProvidersTitle>Whatch Providers in {country}</WatchProvidersTitle>
+            {providers.map((provider) => (
+                <WatchProvider provider={provider} />
+            ))}
+        </WatchProvidersContainer>
+    ) : (
+        <NoResults resultsType="Watch Providers" />
     );
 };
 
