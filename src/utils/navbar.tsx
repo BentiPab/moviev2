@@ -23,7 +23,7 @@ export const navLinks: NavLinkType[] = [
         sublinks: [
             {
                 label: "now playing",
-                path: "media/movie/now-playing",
+                path: "media/movie/now_playing",
                 value: "now_playing",
                 auth: true,
                 guest: true,
@@ -37,7 +37,7 @@ export const navLinks: NavLinkType[] = [
             },
             {
                 label: "top rated",
-                path: "media/movie/top-rated",
+                path: "media/movie/top_rated",
                 value: "top_rated",
                 auth: true,
                 guest: true,
@@ -59,14 +59,14 @@ export const navLinks: NavLinkType[] = [
         sublinks: [
             {
                 label: "airing today",
-                path: "media/tv/airing-today",
+                path: "media/tv/airing_today",
                 value: "airing_today",
                 auth: true,
                 guest: true,
             },
             {
                 label: "on the air",
-                path: "media/tv/on-the-air",
+                path: "media/tv/on_the_air",
                 value: "on_the_air",
                 auth: true,
                 guest: true,
@@ -80,7 +80,7 @@ export const navLinks: NavLinkType[] = [
             },
             {
                 label: "top rated",
-                path: "media/tv/top-rated",
+                path: "media/tv/top_rated",
                 value: "top_rated",
                 auth: true,
                 guest: true,

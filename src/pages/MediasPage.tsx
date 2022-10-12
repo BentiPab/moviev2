@@ -1,47 +1,59 @@
 import InfiniteScroller from "components/Common/InfiniteScroller";
 import { useLazyGetMediaListsQuery } from "features/apiCalls/movieEndpoints";
 import useCommonParams from "hooks/useCommonParams";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import LoadingPage from "./LoadingPage";
-import {
-    selectCurrentMediaList,
-    selectBaseData,
-} from "../features/data/selectors";
 import { useParams } from "react-router-dom";
 import { selectIsMobile } from "./../features/ui/selectors";
 import Poster from "components/Poster/Poster";
+import { BaseData, MediaListsRoutes } from "model/models";
 
 const MediasPage = () => {
-    const [page, setPage] = useState(1);
-    const { type = "" } = useParams<{ type: string }>();
-    const [fetchData, { isLoading, isFetching }] = useLazyGetMediaListsQuery();
+    const { type = "", list = "" } = useParams<{
+        type: string;
+        list: MediaListsRoutes;
+    }>();
+    const [
+        fetchData,
+        { isLoading, isFetching },
+        {
+            lastArg: { list: lastList, params: lastParams },
+        },
+    ] = useLazyGetMediaListsQuery();
     const params = useCommonParams();
-    const list = useSelector(selectCurrentMediaList);
-    const media = useSelector(selectBaseData);
+    const [media, setMedia] = useState<BaseData[]>([]);
     const isMobile = useSelector(selectIsMobile);
+    const [isLastPage, setIsLastPage] = useState(false);
 
-    const getmedia = useCallback(async () => {
-        if (!list) {
+    const getMedia = async () => {
+        if (!list || !list) {
             return;
         }
 
-        await fetchData({
+        const isCurrentList = list === lastList;
+        const page = isCurrentList ? parseInt(lastParams.page as string) + 1 : 1;
+
+        const { data } = await fetchData({
             type,
             params: { ...params, page },
             list,
         });
 
+        setMedia((currentMedia) => {
+            if (isCurrentList) {
+                return [...currentMedia, ...(data?.results ?? [])];
+            }
+
+            return [...(data?.results ?? [])];
+        });
+        setIsLastPage(data?.total_pages === data?.page);
+    };
+
+    useEffect(() => {
+        getMedia();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [page, list]);
-
-    useEffect(() => {
-        setPage(1);
-    }, [list]);
-
-    useEffect(() => {
-        getmedia();
-    }, [getmedia]);
+    }, [list, type]);
 
     return (
         <>
@@ -53,9 +65,9 @@ const MediasPage = () => {
                     flex={isMobile}
                     isFetching={isFetching}
                     mainContent
-                    handleScroll={() => setPage(page + 1)}
-                    page={page}
+                    handleScroll={() => !isLastPage && getMedia()}
                     mediaPage
+                    scrollToTop={list !== lastList}
                 >
                     {media.map((posterData) => (
                         <Poster
