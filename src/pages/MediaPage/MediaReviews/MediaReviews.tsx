@@ -13,26 +13,29 @@ type Props = {
 };
 
 const MediaReviews: React.FC<Props> = ({ mediaId, type }) => {
-    const [fetchReviews, { isFetching }] =
-        useLazyGetMediaReviewsQuery();
+    const [
+        fetchReviews,
+        { isLoading, isFetching },
+        {
+            lastArg: { page: lastPage },
+        },
+    ] = useLazyGetMediaReviewsQuery();
     const [reviews, setReviews] = useState<ReviewType[]>();
-    const [page, setPage] = useState<number>(1);
-    const [isLoading, setIsLoading] = useState<boolean>(true)
+    const [isLastPage, setIsLastPage] = useState(false);
+
+    const getReviews = async () => {
+        const page = !!lastPage ? lastPage + 1 : 1
+        const { data } = await fetchReviews({ type, mediaId, page });
+        const oldValues = reviews ?? [];
+        const newReviews = oldValues.concat(data?.results ?? []);
+        setIsLastPage(page === data?.total_pages);
+        setReviews(newReviews);
+    };
 
     useEffect(() => {
-        setIsLoading(true)
-        fetchReviews({ type, mediaId, page }).then((res) => {
-            if (!res.data) {
-                setIsLoading(false)
-                return;
-            }
-            const oldValues = reviews || []
-            const newReviews = oldValues.concat(res.data.results);
-            setReviews(newReviews);
-            setIsLoading(false)
-        });
+        getReviews();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [page]);
+    }, []);
 
     if (isLoading) {
         return <LoadingPage />;
@@ -48,8 +51,7 @@ const MediaReviews: React.FC<Props> = ({ mediaId, type }) => {
                 <InfiniteScroller
                     flex
                     direction="column"
-                    handleScroll={() => setPage(page + 1)}
-                    page={page}
+                    handleScroll={() => !isLastPage && getReviews()}
                     isFetching={isFetching}
                 >
                     {sortedReviews.map((review, index) => {

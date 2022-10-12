@@ -21,10 +21,10 @@ export type SessionId = { success: boolean; session_id: string };
 export type GuestRes =
   | Res
   | {
-    success: boolean;
-    guest_session_id: string;
-    expires_at: string;
-  };
+      success: boolean;
+      guest_session_id: string;
+      expires_at: string;
+    };
 
 export type SessionRes = Res | SessionId;
 
@@ -112,9 +112,6 @@ export interface AppState {
 }
 
 export interface UiState {
-  page: number;
-  totalPages: number;
-  totalResults: number;
   expandedNav: string;
   genres: Genre[];
   showNavbar: boolean;
@@ -202,7 +199,6 @@ export type MediaListsRoutes =
   | "on_the_air";
 
 export interface DataState {
-  listData?: BaseData[];
   currentList?: MediaListsRoutes;
   currentMedia?: BaseData;
 }
