@@ -1,17 +1,16 @@
 import MenuIcon from "@mui/icons-material/Menu";
-import { useDispatch, useSelector } from "react-redux";
-import { selectIsMobile, selectShowNavbar } from "features/ui/selectors";
+import { useDispatch } from "react-redux";
 import uiActions from "features/ui/actions";
+import styled from 'styled-components';
 
+export const HamburgerIcon = styled(MenuIcon)``
 
 const Hamburger = () => {
-    const showNavbar = useSelector(selectShowNavbar);
-    const isMobile = useSelector(selectIsMobile);
     const dispatch = useDispatch();
-    console.log(showNavbar)
-    return isMobile ? (
-        <MenuIcon onClick={() => dispatch(uiActions.setShowNavbar(true))} />
-    ) : null;
+
+    return (
+        <HamburgerIcon onClick={() => dispatch(uiActions.setShowNavbar(true))} />
+    )
 };
 
 export default Hamburger;

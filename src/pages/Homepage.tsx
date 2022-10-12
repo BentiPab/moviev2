@@ -5,9 +5,9 @@ import { Cookie } from 'utils/cookies';
 
 const Homepage = () => {
     useEffect(() => {
-    Cookie.set('test', 'Testing', 30)
+        Cookie.set('test', 'Testing', 30)
     }, [])
-    return <div>Homepage</div>
+    return <div>Homepage {window.screen.availWidth} </div>
 };
 
 export default Homepage;

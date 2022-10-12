@@ -115,7 +115,6 @@ export interface UiState {
   expandedNav: string;
   genres: Genre[];
   showNavbar: boolean;
-  isMobile: boolean;
 }
 
 export type ErrorOrigin =
@@ -388,9 +387,9 @@ export interface WatchProvider {
 
 export interface WatchProviders {
   link: string;
-  flatrate: WatchProvider[];
-  rent: WatchProvider[];
-  buy: WatchProvider[];
+  flatrate?: WatchProvider[];
+  rent?: WatchProvider[];
+  buy?: WatchProvider[];
 }
 
 export interface CountryWatchProviders {

@@ -12,8 +12,8 @@ type Props = {
 };
 
 const StyledTabs = styled(Tabs)`
-    margin-bottom: 1rem;
-`
+  margin-bottom: 1rem;
+`;
 
 const MediaPageTabs: React.FC<Props> = ({ mediaId, type, overview }) => {
     const [activeTab, setActiveTab] = useState<number>(0);
@@ -30,7 +30,7 @@ const MediaPageTabs: React.FC<Props> = ({ mediaId, type, overview }) => {
                 tabs={tabs}
                 value={activeTab}
                 onChange={(_, newTab) => setActiveTab(newTab)}
-                scrollButtons='auto'
+                scrollButtons="auto"
                 variant="scrollable"
             />
             {activeTab === 0 && <div>{overview}</div>}

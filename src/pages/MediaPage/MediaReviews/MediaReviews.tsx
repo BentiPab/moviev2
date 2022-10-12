@@ -6,13 +6,18 @@ import { Review as ReviewType } from "../../../model/models";
 import Review from "./Review";
 import NoResults from "./../../../components/NoResults/NoResults";
 import { WhiteDivider } from "../MediaPage";
+import useScrollToTop from "./../../../hooks/useScrollToTop";
+import ScrollToTopButton from "components/Common/ScrollToTopButton";
 
 type Props = {
     mediaId: string;
     type: string;
 };
 
+const ID = "media-reviews";
+
 const MediaReviews: React.FC<Props> = ({ mediaId, type }) => {
+    const showScrollToTop = useScrollToTop(ID);
     const [
         fetchReviews,
         { isLoading, isFetching },
@@ -24,7 +29,7 @@ const MediaReviews: React.FC<Props> = ({ mediaId, type }) => {
     const [isLastPage, setIsLastPage] = useState(false);
 
     const getReviews = async () => {
-        const page = !!lastPage ? lastPage + 1 : 1
+        const page = !!lastPage ? lastPage + 1 : 1;
         const { data } = await fetchReviews({ type, mediaId, page });
         const oldValues = reviews ?? [];
         const newReviews = oldValues.concat(data?.results ?? []);
@@ -49,10 +54,10 @@ const MediaReviews: React.FC<Props> = ({ mediaId, type }) => {
         <>
             {sortedReviews && sortedReviews.length ? (
                 <InfiniteScroller
-                    flex
-                    direction="column"
                     handleScroll={() => !isLastPage && getReviews()}
                     isFetching={isFetching}
+                    id={ID}
+                    $onecolumn
                 >
                     {sortedReviews.map((review, index) => {
                         const isLastItem = index === sortedReviews.length - 1;
@@ -64,6 +69,7 @@ const MediaReviews: React.FC<Props> = ({ mediaId, type }) => {
                             </>
                         );
                     })}
+                    {showScrollToTop && <ScrollToTopButton id={ID} />}
                 </InfiniteScroller>
             ) : (
                 <NoResults resultsType="Reviews" />

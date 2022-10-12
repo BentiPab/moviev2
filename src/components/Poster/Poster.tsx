@@ -6,10 +6,9 @@ import theme from "styleguide/theme";
 import { getImagePath } from "../../utils/media";
 import predifinedPoster from "../../assets/predifinedPoster.png";
 import PosterOverlay from "./PosterOverlay";
-import { useSelector } from "react-redux";
-import { selectIsMobile } from "features/ui/selectors";
 import { getTitleToUrl } from "utils/media";
 import { useNavigate } from "react-router-dom";
+import useIsMobile from "./../../hooks/useIsMobile";
 
 export type PosterProps = {
     posterData: BaseData | TvShow;
@@ -69,7 +68,7 @@ const Poster: React.FC<PosterProps> = ({
         ? getImagePath(posterPath, original)
         : predifinedPoster;
     const [showOverlay, setShowOverlay] = useState(false);
-    const isMobile = useSelector(selectIsMobile);
+    const isMobile = useIsMobile();
     const formattedTitle = getTitleToUrl(title);
     const navigate = useNavigate();
     return (
@@ -77,6 +76,7 @@ const Poster: React.FC<PosterProps> = ({
             mainPage={mainPage}
             onMouseEnter={() => !isMobile && setShowOverlay(true)}
             onMouseLeave={() => !isMobile && setShowOverlay(false)}
+            onClick={() => isMobile && setShowOverlay(!showOverlay)}
         >
             {loading && !imageError && <ImageSkeleton original={original} />}
             <PosterImage
@@ -87,7 +87,9 @@ const Poster: React.FC<PosterProps> = ({
                     (e.target as HTMLImageElement).complete && setLoading(false)
                 }
                 zoom={showOverlay && shouldZoom}
-                onClick={() => navigate(`/media/${type}/${formattedTitle}/${id}`)}
+                onClick={() =>
+                    showOverlay && navigate(`/media/${type}/${formattedTitle}/${id}`)
+                }
             />
             {!loading && shouldShowOverlay && (
                 <PosterOverlay media={posterData} show={showOverlay} />
