@@ -1,16 +1,21 @@
-import { Card, CardContent, CardMedia, Typography, Button } from "@mui/material";
-import { useGetMediaCreditsQuery } from "features/apiCalls/movieEndpoints";
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+} from "@mui/material";
+import { useGetMediaCreditsQuery } from "features/apiCalls/mediaEndpoints";
 import LoadingPage from "pages/LoadingPage";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { getImagePath, paginateData } from "../../../utils/media";
 import { FullWidthGrid } from "styleguide/commonComponents";
 import { sortBy } from "lodash";
 import NoResults from "./../../../components/NoResults/NoResults";
 import styled from "styled-components";
 import theme from "./../../../styleguide/theme";
-import useScrollToTop from "./../../../hooks/useScrollToTop";
 import ScrollToTopButton from "components/Common/ScrollToTopButton";
 import AddButton from "components/Common/AddButton";
+import { SCROLL_DISTANCE } from "pages/constants";
 
 type Props = {
   mediaId: string;
@@ -33,18 +38,26 @@ const StyledCard = styled(Card)`
   }
 `;
 
-const ID = "media-casting";
 
 const MediaCasting: React.FC<Props> = (props) => {
   const { isLoading, data } = useGetMediaCreditsQuery(props);
-  const showScrollToTop = useScrollToTop(ID);
-  const [page, setPage] = useState<number>(1)
+  const [showScrollToTop, setShowScrollToTop] = useState(false);
+  const [page, setPage] = useState<number>(1);
+  const divRef = useRef<HTMLDivElement>(null);
 
   const sortedCast = sortBy(data?.cast, "order");
 
-  const paginatedCast = useMemo(() => paginateData(sortedCast, page), [page, sortedCast])
-  const showLoadMoreButton = paginatedCast.length < sortedCast.length
+  const paginatedCast = useMemo(
+    () => paginateData(sortedCast, page),
+    [page, sortedCast]
+  );
+  const showLoadMoreButton = paginatedCast.length < sortedCast.length;
 
+  const handleScrollToTop = () => {
+    if (divRef.current) {
+      divRef.current.scrollTo({ top: 0 });
+    }
+  };
 
   if (isLoading) {
     return <LoadingPage />;
@@ -53,7 +66,12 @@ const MediaCasting: React.FC<Props> = (props) => {
   return (
     <>
       {paginatedCast ? (
-        <FullWidthGrid id={ID}>
+        <FullWidthGrid
+          ref={divRef}
+          onScroll={(ev) =>
+            setShowScrollToTop(ev.currentTarget.scrollTop > SCROLL_DISTANCE)
+          }
+        >
           {paginatedCast.map((act) => (
             <StyledCard>
               <CardMedia
@@ -71,8 +89,15 @@ const MediaCasting: React.FC<Props> = (props) => {
               </CardContent>
             </StyledCard>
           ))}
-          {showLoadMoreButton && <AddButton handleClick={() => setPage((curr) => curr + 1)} label='Load More' />}
-          {showScrollToTop && <ScrollToTopButton id={ID} />}
+          {showLoadMoreButton && (
+            <AddButton
+              handleClick={() => setPage((curr) => curr + 1)}
+              label="Load More"
+            />
+          )}
+          {showScrollToTop && (
+            <ScrollToTopButton handleClick={handleScrollToTop} />
+          )}
         </FullWidthGrid>
       ) : (
         <NoResults resultsType="Casting" />

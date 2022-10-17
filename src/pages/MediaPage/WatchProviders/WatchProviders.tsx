@@ -1,4 +1,4 @@
-import { useGetWatchProvidersQuery } from "features/apiCalls/movieEndpoints";
+import { useGetWatchProvidersQuery } from "features/apiCalls/mediaEndpoints";
 import React from "react";
 import LoadingPage from "pages/LoadingPage";
 import WatchProvider from "./WatchProvider";

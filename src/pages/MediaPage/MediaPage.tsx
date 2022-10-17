@@ -4,13 +4,14 @@ import styled from "styled-components";
 import Rating from "../../components/Rating/Rating";
 import { useParams } from "react-router-dom";
 import Genres from "components/Genres/Genres";
-import { useGetMediaDetailsQuery } from "features/apiCalls/movieEndpoints";
+import { useGetMediaDetailsQuery } from "features/apiCalls/mediaEndpoints";
 import LoadingPage from "../LoadingPage";
 import { getYear } from "utils/media";
 import MediaPageTabs from "./MediaPageTabs";
 import theme from "styleguide/theme";
 import ScrollToTopButton from "components/Common/ScrollToTopButton";
-import useScrollToTop from "./../../hooks/useScrollToTop";
+import { SCROLL_DISTANCE } from './../constants';
+import { useRef, useState } from "react";
 
 const MediaPageContainer = styled.div`
   display: flex;
@@ -51,15 +52,14 @@ const PosterContainer = styled.div`
   max-height: 100%;
 `;
 
-const ID = "media-page";
-
 const MediaPage = () => {
   const { id: mediaId = "", type = "" } = useParams<{
     type: string;
     id: string;
   }>();
   const { data: media } = useGetMediaDetailsQuery({ type, mediaId });
-  const showScrollToTop = useScrollToTop(ID);
+  const [showScrollToTop, setShowScrollToTop] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null)
 
   if (!media) {
     return <LoadingPage />;
@@ -67,8 +67,16 @@ const MediaPage = () => {
 
   const year = getYear(media.release_date);
 
+  const handleScrollToTop = () => {
+    if (containerRef.current) {
+      containerRef.current.scrollTo({ top: 0 })
+    }
+  }
+
+  const runtime = type === 'movie' ? `${media.runtime}min` : media.runtime
+
   return (
-    <MediaPageContainer id={ID}>
+    <MediaPageContainer ref={containerRef} onScroll={(ev) => setShowScrollToTop(ev.currentTarget.scrollTop > SCROLL_DISTANCE)}>
       <PosterContainer>
         <Poster posterData={media} original />
       </PosterContainer>
@@ -83,7 +91,7 @@ const MediaPage = () => {
             {year}
           </Typography>
           <Typography component="span" variant="body2">
-            {media.runtime}min
+            {runtime}
           </Typography>
           <Rating rating={media.vote_average} />
         </Stack>
@@ -94,7 +102,7 @@ const MediaPage = () => {
           overview={media.overview}
         />
       </MediaInfoContainer>
-      {showScrollToTop && <ScrollToTopButton id={ID} />}
+      {showScrollToTop && <ScrollToTopButton handleClick={handleScrollToTop} />}
     </MediaPageContainer>
   );
 };

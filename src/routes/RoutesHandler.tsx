@@ -1,10 +1,10 @@
-import Homepage from "pages/Homepage";
-import LoggedInPage from "pages/LoggedInPage";
+import Homepage from "pages/Homepage/Homepage";
 import { Navigate, Route, Routes } from "react-router-dom";
 import MediasPage from "pages/MediasPage";
-import LoginPage from "pages/LoginPage";
-import FavoritesPage from "pages/FavoritesPage";
 import MediaPage from "../pages/MediaPage/MediaPage";
+import NotFoundPage from './../pages/NotFoundPage';
+import PageUnderConstruction from "pages/PageUnderConstruction/PageUnderConstruction";
+import SearchPage from "pages/SearchPage";
 
 const RoutesHandler = () => {
     return (
@@ -18,11 +18,15 @@ const RoutesHandler = () => {
                 </Route>
             </Route>
             <Route path="account">
+                <Route path="*" element={<PageUnderConstruction />} />
+                {/*TODO: implement user account*/}
                 {/* <Route path='details' element={ } /> */}
-                <Route path="login" element={<LoginPage />} />
-                <Route path="favorites" element={<FavoritesPage />} />
+                {/* <Route path="login" element={<LoginPage />} />
+                <Route path="favorites" element={<FavoritesPage />} /> */}
             </Route>
-            <Route path="/approved" element={<LoggedInPage />} />
+            {/* <Route path="/approved" element={<LoggedInPage />} /> */}
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="*" element={<NotFoundPage />} />
         </Routes>
     );
 };

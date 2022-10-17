@@ -30,7 +30,7 @@ export const PosterImage = styled.img<{ ready: boolean; zoom?: boolean }>`
     `};
 `;
 
-const PosterContainer = styled.div<{ mainPage?: boolean }>`
+export const PosterContainer = styled.div<{ mainPage?: boolean }>`
   width: ${({ mainPage }) => (mainPage ? "10rem" : "15rem")};
   max-height: 100%;
   position: relative;

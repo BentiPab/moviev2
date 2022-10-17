@@ -53,6 +53,7 @@ export const formatTvToFullMedia = (media: any) => {
     adult: false,
     release_date: media.first_air_date,
     type: "tv" as MediaType,
+    runtime: `${media.number_of_episodes}E - ${media.number_of_seasons}S`,
   };
 };
 
