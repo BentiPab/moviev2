@@ -1,5 +1,5 @@
 import { moviesApi } from "./apiCalls";
-import { getBuiltPath, NewParamsType } from "./../../utils/path";
+import { getBuiltPath, NewParamsType } from "../../utils/path";
 import {
   BaseDataList,
   Credits,
@@ -8,11 +8,12 @@ import {
   MediaListsRoutes,
   ReviewList,
   TvList,
+  TvShow,
 } from "model/models";
 import { formatMovies, formatTv, formatTvToFullMedia } from "utils/media";
-import { CountryWatchProviders } from "./../../model/models";
+import { CountryWatchProviders } from "../../model/models";
 import { getRegion } from "utils/intersession";
-import { formatProviders } from "./../../utils/media";
+import { formatProviders } from "../../utils/media";
 
 export const movieEndpoints = moviesApi.injectEndpoints({
   endpoints: (build) => ({
@@ -30,8 +31,9 @@ export const movieEndpoints = moviesApi.injectEndpoints({
       { type: string; mediaId: string }
     >({
       query: ({ type, mediaId }) => getBuiltPath(`/${type}/${mediaId}`),
-      transformResponse: (res: BaseDataList, meta, { type }) =>
-        type === "movie" ? res : formatTvToFullMedia(res),
+      transformResponse: (res: TvShow, meta, { type }) => {
+        return type === "movie" ? res : formatTvToFullMedia(res);
+      },
     }),
     getMediaReviews: build.query<
       ReviewList,
@@ -52,20 +54,31 @@ export const movieEndpoints = moviesApi.injectEndpoints({
       }) => {
         const { countryCode } = getRegion() || { countryCode: "US" };
         const watchProviders = res.results[countryCode];
-        console.log(res.results[countryCode]);
         return !!watchProviders ? formatProviders(watchProviders) : undefined;
       },
     }),
     getMediaCredits: build.query<Credits, { type: string; mediaId: string }>({
       query: ({ type, mediaId }) => getBuiltPath(`/${type}/${mediaId}/credits`),
     }),
+    getQuerySearch: build.query<
+      BaseDataList,
+      { query: string; queryType: string }
+    >({
+      query: ({ query, queryType }) =>
+        getBuiltPath(`/search/${queryType}`, { query }),
+      transformResponse: (res: BaseDataList, meta, { queryType }) =>
+        queryType === "movie" ? formatMovies(res) : formatTv(res as TvList),
+    }),
   }),
 });
 
 export const {
   useLazyGetMediaListsQuery,
+  useGetMediaListsQuery,
   useGetMediaDetailsQuery,
   useLazyGetMediaReviewsQuery,
   useGetWatchProvidersQuery,
   useGetMediaCreditsQuery,
+  useGetQuerySearchQuery,
+  useLazyGetQuerySearchQuery,
 } = movieEndpoints;

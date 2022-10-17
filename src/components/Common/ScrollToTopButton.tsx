@@ -24,18 +24,11 @@ const StyledButton = styled.div`
 `;
 
 type Props = {
-    id: string;
+    handleClick: () => void;
 };
 
-const ScrollToTopButton: FC<Props> = ({ id }) => {
-    const handleClick = () => {
-        const element = document.getElementById(id);
-        if (!element) {
-            return;
-        }
+const ScrollToTopButton: FC<Props> = ({ handleClick }) => {
 
-        element.scrollTo({ top: 0 });
-    };
     return (
         <Tooltip title="Scroll back to top">
             <StyledButton onClick={handleClick}>

@@ -16,60 +16,57 @@ const {
 
 const addToFavorites =
   (mediaId: number, mediaType: "tv" | "movie"): AppThunk =>
-    async (dispatch, getState) => {
-      ;
-      const userId = getState().users.user?.id;
-      if (!userId) {
-        return;
-      }
-      await dispatch(
-        addToFavoritesApi.initiate({
-          id: userId,
-          media_id: mediaId,
-          media_type: mediaType,
-          favorite: true,
-        })
-      );
-      dispatch(fetchUserFavoriteMedia(userId));
-    };
+  async (dispatch, getState) => {
+    const userId = getState().users.user?.id;
+    if (!userId) {
+      return;
+    }
+    await dispatch(
+      addToFavoritesApi.initiate({
+        id: userId,
+        media_id: mediaId,
+        media_type: mediaType,
+        favorite: true,
+      })
+    );
+    dispatch(fetchUserFavoriteMedia(userId));
+  };
 
 const fetchUserFavoriteMedia =
   (userId: number): AppThunk =>
-    async (dispatch) => {
-      ;
-      await dispatch(getFavoriteMovies.initiate(userId, { forceRefetch: true }));
-      await dispatch(getFavoriteTvShows.initiate(userId, { forceRefetch: true }));
-    };
+  async (dispatch) => {
+    await dispatch(getFavoriteMovies.initiate(userId, { forceRefetch: true }));
+    await dispatch(getFavoriteTvShows.initiate(userId, { forceRefetch: true }));
+  };
 
 const removeFromFavorites =
   (mediaId: number, mediaType: "tv" | "movie"): AppThunk =>
-    async (dispatch, getState) => {
-      const userId = getState().users.user?.id;
-      if (!userId) {
-        return;
-      }
-      ;
-      await dispatch(
-        addToFavoritesApi.initiate({
-          id: userId,
-          media_id: mediaId,
-          media_type: mediaType,
-          favorite: false,
-        })
-      );
+  async (dispatch, getState) => {
+    const userId = getState().users.user?.id;
+    if (!userId) {
+      return;
+    }
+    await dispatch(
+      addToFavoritesApi.initiate({
+        id: userId,
+        media_id: mediaId,
+        media_type: mediaType,
+        favorite: false,
+      })
+    );
 
-      dispatch(fetchUserFavoriteMedia(userId));
-    };
+    dispatch(fetchUserFavoriteMedia(userId));
+  };
 
 const loadUsersLists =
   (userId: number): AppThunk =>
-    async (dispatch) => {
-      await dispatch(getCreatedLists.initiate(userId));
-      await dispatch(getFavoriteMovies.initiate(userId));
-      await dispatch(getFavoriteTvShows.initiate(userId));
-      await dispatch(getMoviesWatchList.initiate(userId));
-      await dispatch(getTvWatchLists.initiate(userId));
-    };
+  async (dispatch) => {
+    await dispatch(getCreatedLists.initiate(userId));
+    await dispatch(getFavoriteMovies.initiate(userId));
+    await dispatch(getFavoriteTvShows.initiate(userId));
+    await dispatch(getMoviesWatchList.initiate(userId));
+    await dispatch(getTvWatchLists.initiate(userId));
+  };
 
 const fetchUser = (): AppThunk => async (dispatch) => {
   try {

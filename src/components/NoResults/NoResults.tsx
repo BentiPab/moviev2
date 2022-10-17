@@ -3,10 +3,11 @@ import React from "react";
 import { getRegion } from "utils/intersession";
 
 type Props = {
-    resultsType: "Reviews" | "Casting" | "Watch Providers";
+    resultsType: "Reviews" | "Casting" | "Watch Providers" | "Search";
+    message?: string
 };
 
-const NoResults: React.FC<Props> = ({ resultsType }) => {
+const NoResults: React.FC<Props> = ({ resultsType, message }) => {
     const isWatchProviders = resultsType === "Watch Providers";
     const { country } = getRegion();
     const defaultMessage = `No ${resultsType} where found`;
@@ -15,7 +16,7 @@ const NoResults: React.FC<Props> = ({ resultsType }) => {
         : defaultMessage;
 
     return (
-        <Alert severity="info">{finalMessage}</Alert>
+        <Alert severity="info">{message ? message : finalMessage}</Alert>
     );
 };
 

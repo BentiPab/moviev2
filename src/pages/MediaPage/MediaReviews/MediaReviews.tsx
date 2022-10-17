@@ -1,23 +1,19 @@
 import InfiniteScroller from "components/Common/InfiniteScroller";
-import { useLazyGetMediaReviewsQuery } from "features/apiCalls/movieEndpoints";
+import { useLazyGetMediaReviewsQuery } from "features/apiCalls/mediaEndpoints";
 import LoadingPage from "pages/LoadingPage";
 import React, { useState, useEffect } from "react";
 import { Review as ReviewType } from "../../../model/models";
 import Review from "./Review";
 import NoResults from "./../../../components/NoResults/NoResults";
 import { WhiteDivider } from "../MediaPage";
-import useScrollToTop from "./../../../hooks/useScrollToTop";
-import ScrollToTopButton from "components/Common/ScrollToTopButton";
 
 type Props = {
     mediaId: string;
     type: string;
 };
 
-const ID = "media-reviews";
 
 const MediaReviews: React.FC<Props> = ({ mediaId, type }) => {
-    const showScrollToTop = useScrollToTop(ID);
     const [
         fetchReviews,
         { isLoading, isFetching },
@@ -56,8 +52,8 @@ const MediaReviews: React.FC<Props> = ({ mediaId, type }) => {
                 <InfiniteScroller
                     handleScroll={() => !isLastPage && getReviews()}
                     isFetching={isFetching}
-                    id={ID}
                     $onecolumn
+                    showScrollToTopButton
                 >
                     {sortedReviews.map((review, index) => {
                         const isLastItem = index === sortedReviews.length - 1;
@@ -69,7 +65,6 @@ const MediaReviews: React.FC<Props> = ({ mediaId, type }) => {
                             </>
                         );
                     })}
-                    {showScrollToTop && <ScrollToTopButton id={ID} />}
                 </InfiniteScroller>
             ) : (
                 <NoResults resultsType="Reviews" />

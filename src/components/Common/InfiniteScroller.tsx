@@ -1,7 +1,8 @@
-import React, { ReactNode, useEffect, useRef } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { FullWidthFlex, FullWidthGrid } from "styleguide/commonComponents";
-import { useDispatch } from "react-redux";
 import LoadingPage from "./../../pages/LoadingPage";
+import { SCROLL_DISTANCE } from "./../../pages/constants";
+import ScrollToTopButton from "./ScrollToTopButton";
 
 type Props = {
     children: ReactNode;
@@ -12,9 +13,9 @@ type Props = {
     maxPages?: number;
     $maincontent?: boolean;
     mediaPage?: boolean;
+    showScrollToTopButton?: boolean;
     scrollToTop?: boolean;
-    id?: string
-    $onecolumn?: boolean
+    $onecolumn?: boolean;
 };
 
 const InfiniteScroller: React.FC<Props> = ({
@@ -25,35 +26,37 @@ const InfiniteScroller: React.FC<Props> = ({
     $maincontent,
     isFetching,
     mediaPage,
+    $onecolumn,
+    showScrollToTopButton = false,
     scrollToTop,
-    id,
-    $onecolumn
 }) => {
     const divRef = useRef<HTMLDivElement>(null);
-    const dispatch = useDispatch();
+    const [shouldShowScrollToTopButton, setShouldShowScrollToTopButton] =
+        useState(false);
+
+    const handleScrollToTop = () => {
+        if (divRef.current) {
+            divRef.current.scrollTo({ top: 0 });
+        }
+    };
+
     useEffect(() => {
-        const currRef = divRef.current;
-        if (!currRef) {
-            return;
+        if (scrollToTop && divRef.current) {
+            divRef.current.scrollTo({ top: 0 });
+        }
+    }, [scrollToTop]);
+
+    const handleScrollEvent = (ev: React.UIEvent<HTMLDivElement, UIEvent>) => {
+        const { scrollTop, scrollHeight, clientHeight } = ev.currentTarget;
+        const isAtButton = scrollHeight - scrollTop <= clientHeight;
+        if (isAtButton) {
+            handleScroll();
         }
 
-        if (scrollToTop) {
-            currRef.scrollTo({ top: 0 });
-        }
-
-        const onScroll = () => {
-            const { scrollTop, scrollHeight, clientHeight } = currRef;
-            const isAtButton = scrollHeight - scrollTop <= clientHeight;
-            if (isAtButton) {
-                handleScroll();
-            }
-        };
-        currRef.addEventListener("scroll", onScroll);
-
-        return () => {
-            currRef.removeEventListener("scroll", onScroll);
-        };
-    }, [dispatch, handleScroll, scrollToTop]);
+        setShouldShowScrollToTopButton(
+            scrollTop > SCROLL_DISTANCE && showScrollToTopButton
+        );
+    };
 
     return (
         <>
@@ -63,15 +66,26 @@ const InfiniteScroller: React.FC<Props> = ({
                     ref={divRef}
                     $direction={direction}
                     $mediapage={mediaPage}
-                    id={id}
+                    onScroll={handleScrollEvent}
                 >
                     {children}
                     {isFetching && <LoadingPage expandAll />}
+                    {shouldShowScrollToTopButton && (
+                        <ScrollToTopButton handleClick={handleScrollToTop} />
+                    )}
                 </FullWidthFlex>
             ) : (
-                <FullWidthGrid $maincontent={$maincontent} ref={divRef} id={id} $onecolumn={$onecolumn}>
+                <FullWidthGrid
+                    $maincontent={$maincontent}
+                    ref={divRef}
+                    $onecolumn={$onecolumn}
+                    onScroll={handleScrollEvent}
+                >
                     {children}
                     {isFetching && <LoadingPage expandAll />}
+                    {shouldShowScrollToTopButton && (
+                        <ScrollToTopButton handleClick={handleScrollToTop} />
+                    )}
                 </FullWidthGrid>
             )}
         </>

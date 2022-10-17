@@ -326,6 +326,9 @@ export interface TvShow
   original_name: string;
   origin_country: Countries[];
   name: string;
+  in_production: boolean;
+  number_of_episodes: number;
+  number_of_seasons: number;
 }
 
 export type Countries = string;
